@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_app/firebase_functions.dart';
 import 'package:todo_app/models/task_model.dart';
 import 'package:todo_app/widgets/default_elevated_button.dart';
 import 'package:todo_app/widgets/default_text_form_field.dart';
@@ -79,7 +80,7 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
                   lastDate: DateTime.now().add(const Duration(days: 365)),
                   initialEntryMode: DatePickerEntryMode.calendarOnly,
                 );
-                if (dateTime != null) {
+                if (dateTime != null && selectedDate != dateTime) {
                   selectedDate = dateTime;
                 }
                 setState(() {});
@@ -112,6 +113,24 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
       title: titleController.text,
       description: descriptionController.text,
       date: selectedDate,
+    );
+    FirebaseFunctions.addTaskToFirestore(task)
+        /* ---------------------------------------------------------------- */
+        /*                   ye3mel eh fe halet el success                  */
+        /* ---------------------------------------------------------------- */
+        .timeout(
+      Duration(),
+      onTimeout: () {
+        Navigator.of(context).pop();
+      },
+    )
+        /* ---------------------------------------------------------------- */
+        /*                  betetnededh lma yeb2a feh error                 */
+        /* ---------------------------------------------------------------- */
+        .catchError(
+      (error) {
+        print(error);
+      },
     );
   }
 }
