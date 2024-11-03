@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/firebase_functions.dart';
 import 'package:todo_app/models/task_model.dart';
+import 'package:todo_app/tabs/tasks/tasks_provider.dart';
 import 'package:todo_app/widgets/default_elevated_button.dart';
 import 'package:todo_app/widgets/default_text_form_field.dart';
 
@@ -122,6 +124,10 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
       Duration(),
       onTimeout: () {
         Navigator.of(context).pop();
+        /* ---------------------------------------------------------------------------------------------- */
+        /*               kda ana b-access el method bas mesh 3aiez a3mel LISTEN 3la data feh              */
+        /* ---------------------------------------------------------------------------------------------- */
+        Provider.of<TasksProvider>(context, listen: false).getTasks();
       },
     )
         /* ---------------------------------------------------------------- */
