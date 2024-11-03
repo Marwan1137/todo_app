@@ -19,6 +19,14 @@ class TasksProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateTask(TaskModel updatedTask) {
+    final index = tasks.indexWhere((task) => task.id == updatedTask.id);
+    if (index != -1) {
+      tasks[index] = updatedTask; // Update the task in the list
+      notifyListeners();
+    }
+  }
+
   void changeSelectedDate(DateTime date) {
     selectedDate = date;
     notifyListeners();

@@ -6,6 +6,7 @@ import 'package:todo_app/firebase_functions.dart';
 import 'package:todo_app/models/task_model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_app/tabs/tasks/tasks_provider.dart';
+import 'package:todo_app/tabs/tasks/update_task_screen.dart';
 
 // ignore: must_be_immutable
 class TaskItem extends StatelessWidget {
@@ -54,8 +55,30 @@ class TaskItem extends StatelessWidget {
               label: 'Delete',
               padding: const EdgeInsets.symmetric(
                 vertical: 10,
-                horizontal: 25,
+                horizontal: 10,
               ),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            SlidableAction(
+              onPressed: (_) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => UpdateTaskScreen(task: task),
+                  ),
+                );
+              },
+              backgroundColor: Color(0xFF21B7CA),
+              foregroundColor: Colors.white,
+              icon: Icons.edit,
+              label: 'Edit',
+              padding: const EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 10,
+              ),
+              borderRadius: BorderRadius.circular(15),
             ),
           ],
         ),

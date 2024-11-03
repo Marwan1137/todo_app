@@ -44,4 +44,13 @@ class FirebaseFunctions {
     return taskCollection.doc(taskId).delete();
   }
   /* -------------------------------------------------------------------------- */
+
+  /* -------------------------------------------------------------------------- */
+  /*        ba3mel update lel task mn firebase (Update Function)                */
+  /* -------------------------------------------------------------------------- */
+  static Future<void> updateTaskInFirestore(TaskModel task) async {
+    CollectionReference<TaskModel> taskCollection = getTasksCollection();
+    return taskCollection.doc(task.id).set(task); // Update task
+  }
+/* -------------------------------------------------------------------------- */
 }
