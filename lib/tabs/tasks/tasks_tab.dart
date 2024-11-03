@@ -51,10 +51,14 @@ class _TasksTabState extends State<TasksTab> {
                 firstDate: DateTime.now().subtract(
                   const Duration(days: 365),
                 ),
-                focusDate: DateTime.now(),
+                focusDate: tasksProvider.selectedDate,
                 lastDate: DateTime.now().add(
                   const Duration(days: 365),
                 ),
+                onDateChange: (selectedDate) => {
+                  tasksProvider.changeSelectedDate(selectedDate),
+                  tasksProvider.getTasks(),
+                },
                 showTimelineHeader: false,
                 activeColor: AppTheme.white,
                 dayProps: EasyDayProps(
@@ -62,7 +66,7 @@ class _TasksTabState extends State<TasksTab> {
                   width: 58,
                   dayStructure: DayStructure.dayStrDayNum,
                   /* -------------------------------------------------------------------------- */
-                  /*                              active selection Design                       */
+                  /*                              active selection Style                       */
                   /* -------------------------------------------------------------------------- */
                   activeDayStyle: DayStyle(
                     decoration: BoxDecoration(
@@ -80,9 +84,28 @@ class _TasksTabState extends State<TasksTab> {
                       color: AppTheme.primary,
                     ),
                   ),
+                  /* -------------------------------------------------------------------------- */
+                  /*                            Today Selection Style                           */
+                  /* -------------------------------------------------------------------------- */
+                  todayStyle: DayStyle(
+                    decoration: BoxDecoration(
+                      color: AppTheme.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    dayNumStyle: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.black,
+                    ),
+                    dayStrStyle: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.black,
+                    ),
+                  ),
 
                   /* -------------------------------------------------------------------------- */
-                  /*                             inactive selection Design                      */
+                  /*                             inactive selection Style                   */
                   /* -------------------------------------------------------------------------- */
                   inactiveDayStyle: DayStyle(
                     decoration: BoxDecoration(

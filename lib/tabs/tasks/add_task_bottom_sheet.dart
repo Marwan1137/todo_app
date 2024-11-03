@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/app_theme.dart';
 import 'package:todo_app/firebase_functions.dart';
 import 'package:todo_app/models/task_model.dart';
 import 'package:todo_app/tabs/tasks/tasks_provider.dart';
@@ -25,85 +27,97 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
   Widget build(BuildContext context) {
     TextStyle? titleMediumStyle = Theme.of(context).textTheme.titleMedium;
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      height: MediaQuery.sizeOf(context).height * 0.5,
-      child: Form(
-        key: formKey,
-        child: Column(
-          children: [
-            Text(
-              'Add new Task',
-              style: titleMediumStyle,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            DefaultTextFormField(
-              controller: titleController,
-              hintText: 'Enter Task Title',
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Title can not be empty';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            DefaultTextFormField(
-              controller: descriptionController,
-              hintText: 'Enter Task Descriptiom',
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Description can not be empty';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            Text(
-              'Select Date',
-              style: titleMediumStyle?.copyWith(fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            InkWell(
-              onTap: () async {
-                DateTime? dateTime = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime.now().add(const Duration(days: 365)),
-                  initialEntryMode: DatePickerEntryMode.calendarOnly,
-                );
-                if (dateTime != null && selectedDate != dateTime) {
-                  selectedDate = dateTime;
-                }
-                setState(() {});
-              },
-              child: Text(
-                dateFormat.format(selectedDate),
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        height: MediaQuery.sizeOf(context).height * 0.5,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.horizontal(
+            left: Radius.circular(15),
+            right: Radius.circular(15),
+          ),
+          color: AppTheme.white,
+        ),
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              Text(
+                'Add new Task',
+                style: titleMediumStyle,
                 textAlign: TextAlign.center,
               ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            DefaultElevatedButton(
-              label: 'Add',
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  addTask();
-                }
-              },
-            )
-          ],
+              const SizedBox(
+                height: 16,
+              ),
+              DefaultTextFormField(
+                controller: titleController,
+                hintText: 'Enter Task Title',
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Title can not be empty';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              DefaultTextFormField(
+                controller: descriptionController,
+                hintText: 'Enter Task Descriptiom',
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Description can not be empty';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              Text(
+                'Select Date',
+                style: titleMediumStyle?.copyWith(fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              InkWell(
+                onTap: () async {
+                  DateTime? dateTime = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                    initialEntryMode: DatePickerEntryMode.calendarOnly,
+                  );
+                  if (dateTime != null && selectedDate != dateTime) {
+                    selectedDate = dateTime;
+                  }
+                  setState(() {});
+                },
+                child: Text(
+                  dateFormat.format(selectedDate),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              DefaultElevatedButton(
+                label: 'Add',
+                onPressed: () {
+                  if (formKey.currentState!.validate()) {
+                    addTask();
+                  }
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -128,6 +142,15 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
         /*               kda ana b-access el method bas mesh 3aiez a3mel LISTEN 3la data feh              */
         /* ---------------------------------------------------------------------------------------------- */
         Provider.of<TasksProvider>(context, listen: false).getTasks();
+        Fluttertoast.showToast(
+            msg: "Task added successfully",
+            toastLength: Toast
+                .LENGTH_LONG, // long ya3ni hayezhar le modet 5 seconds w lo short hayo3od 2 seconds //
+            // gravity: ToastGravity.CENTER, // el makan ele hayezhar feh //
+            timeInSecForIosWeb: 5,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
       },
     )
         /* ---------------------------------------------------------------- */
@@ -135,7 +158,15 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
         /* ---------------------------------------------------------------- */
         .catchError(
       (error) {
-        print(error);
+        Fluttertoast.showToast(
+            msg: "Something went wrong",
+            toastLength: Toast
+                .LENGTH_LONG, // long ya3ni hayezhar le modet 5 seconds w lo short hayo3od 2 seconds //
+            // gravity: ToastGravity.CENTER, // el makan ele hayezhar feh //
+            timeInSecForIosWeb: 5,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
       },
     );
   }
