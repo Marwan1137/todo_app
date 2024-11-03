@@ -7,14 +7,16 @@ import 'tabs/tasks/tasks_tab.dart';
 class HomeScreen extends StatefulWidget {
   static const String routname = '/home';
 
+  const HomeScreen({super.key});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Widget> tabs = [
-    TasksTab(),
-    SettingsTab(),
+    const TasksTab(),
+    const SettingsTab(),
   ];
   int currentTabIndex = 0;
 
@@ -32,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
         /* -------------------------------------------------------------------------- */
         /*                       to make the nav bar with notch                       */
         /* -------------------------------------------------------------------------- */
-        shape: CircularNotchedRectangle(),
+        shape: const CircularNotchedRectangle(),
         notchMargin: 8,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         color: AppTheme.white,
@@ -44,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
             () => currentTabIndex = index,
           ),
           elevation: 0,
-          items: [
+          items: const [
             /* -------------------- the 2 icons of the bottom navbar -------------------- */
             BottomNavigationBarItem(
               label: 'Tasks',
@@ -64,10 +66,10 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => showModalBottomSheet(
           context: context,
-          builder: (_) => AddTasksBottomSheet(),
+          builder: (_) => const AddTasksBottomSheet(),
           isScrollControlled: true,
         ),
-        child: Icon(
+        child: const Icon(
           Icons.add,
           size: 30,
         ),

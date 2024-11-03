@@ -27,7 +27,7 @@ class TodoApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: {
-        HomeScreen.routname: (_) => HomeScreen(),
+        HomeScreen.routname: (_) => const HomeScreen(),
       },
       initialRoute: HomeScreen.routname,
       theme: AppTheme.lightTheme,

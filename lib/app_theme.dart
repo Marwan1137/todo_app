@@ -46,7 +46,7 @@ class AppTheme {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: primary,
-        textStyle: TextStyle(
+        textStyle: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w400,
           color: white,

@@ -17,7 +17,7 @@ class TaskItem extends StatelessWidget {
     ThemeData theme = Theme.of(context);
 
     return Container(
-      margin: EdgeInsets.symmetric(
+      margin: const EdgeInsets.symmetric(
         vertical: 8,
         horizontal: 20,
       ),
@@ -29,7 +29,7 @@ class TaskItem extends StatelessWidget {
               onPressed: (_) {
                 FirebaseFunctions.deleteTaskFromFirestore(task.id)
                     .timeout(
-                  Duration(microseconds: 100),
+                  const Duration(microseconds: 100),
                   onTimeout: () =>
                       Provider.of<TasksProvider>(context, listen: false)
                           .getTasks(),
@@ -70,7 +70,7 @@ class TaskItem extends StatelessWidget {
                   ),
                 );
               },
-              backgroundColor: Color(0xFF21B7CA),
+              backgroundColor: const Color(0xFF21B7CA),
               foregroundColor: Colors.white,
               icon: Icons.edit,
               label: 'Edit',
@@ -83,7 +83,7 @@ class TaskItem extends StatelessWidget {
           ],
         ),
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: AppTheme.white,
             borderRadius: BorderRadius.all(
               Radius.circular(15),
@@ -95,10 +95,10 @@ class TaskItem extends StatelessWidget {
               Container(
                 height: 62,
                 width: 4,
-                margin: EdgeInsetsDirectional.all(
+                margin: const EdgeInsetsDirectional.all(
                   15,
                 ),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppTheme.primary,
                   borderRadius: BorderRadius.all(
                     Radius.circular(10),
@@ -114,7 +114,7 @@ class TaskItem extends StatelessWidget {
                       color: theme.primaryColor,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 4,
                   ),
                   Text(
@@ -123,19 +123,19 @@ class TaskItem extends StatelessWidget {
                   ),
                 ],
               ),
-              Spacer(),
+              const Spacer(),
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Container(
                   height: 34,
                   width: 69,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppTheme.primary,
                     borderRadius: BorderRadius.all(
                       Radius.circular(10),
                     ),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.check,
                     size: 32,
                     color: AppTheme.white,
