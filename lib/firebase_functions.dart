@@ -35,4 +35,13 @@ class FirebaseFunctions {
     return querySnapshot.docs.map((docSnapshot) => docSnapshot.data()).toList();
   }
   /* ---------------------------------------------------------------------------------------------- */
+
+  /* -------------------------------------------------------------------------- */
+  /*        ba3mel delete lel task mn firebase (Delete Function)                */
+  /* -------------------------------------------------------------------------- */
+  static Future<void> deleteTaskFromFirestore(String taskId) async {
+    CollectionReference<TaskModel> taskCollection = getTasksCollection();
+    return taskCollection.doc(taskId).delete();
+  }
+  /* -------------------------------------------------------------------------- */
 }

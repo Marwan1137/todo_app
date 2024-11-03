@@ -143,14 +143,15 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
         /* ---------------------------------------------------------------------------------------------- */
         Provider.of<TasksProvider>(context, listen: false).getTasks();
         Fluttertoast.showToast(
-            msg: "Task added successfully",
-            toastLength: Toast
-                .LENGTH_LONG, // long ya3ni hayezhar le modet 5 seconds w lo short hayo3od 2 seconds //
-            // gravity: ToastGravity.CENTER, // el makan ele hayezhar feh //
-            timeInSecForIosWeb: 5,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0);
+          msg: "Task added successfully",
+          toastLength: Toast
+              .LENGTH_LONG, // long ya3ni hayezhar le modet 5 seconds w lo short hayo3od 2 seconds //
+          // gravity: ToastGravity.CENTER, // el makan ele hayezhar feh //
+          timeInSecForIosWeb: 5,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       },
     )
         /* ---------------------------------------------------------------- */
