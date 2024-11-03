@@ -50,7 +50,7 @@ class FirebaseFunctions {
   /* -------------------------------------------------------------------------- */
   static Future<void> updateTaskInFirestore(TaskModel task) async {
     CollectionReference<TaskModel> taskCollection = getTasksCollection();
-    return taskCollection.doc(task.id).set(task); // Update task
+    return taskCollection.doc(task.id).set(task);
   }
 /* -------------------------------------------------------------------------- */
 }

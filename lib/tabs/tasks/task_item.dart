@@ -42,8 +42,8 @@ class TaskItem extends StatelessWidget {
                           .LENGTH_LONG, // long ya3ni hayezhar le modet 5 seconds w lo short hayo3od 2 seconds //
                       // gravity: ToastGravity.CENTER, // el makan ele hayezhar feh //
                       timeInSecForIosWeb: 5,
-                      backgroundColor: Colors.green,
-                      textColor: Colors.white,
+                      backgroundColor: AppTheme.green,
+                      textColor: AppTheme.white,
                       fontSize: 16.0,
                     );
                   },
@@ -70,8 +70,8 @@ class TaskItem extends StatelessWidget {
                   ),
                 );
               },
-              backgroundColor: const Color(0xFF21B7CA),
-              foregroundColor: Colors.white,
+              backgroundColor: AppTheme.primary,
+              foregroundColor: AppTheme.white,
               icon: Icons.edit,
               label: 'Edit',
               padding: const EdgeInsets.symmetric(
@@ -98,9 +98,9 @@ class TaskItem extends StatelessWidget {
                 margin: const EdgeInsetsDirectional.all(
                   15,
                 ),
-                decoration: const BoxDecoration(
-                  color: AppTheme.primary,
-                  borderRadius: BorderRadius.all(
+                decoration: BoxDecoration(
+                  color: task.isDone ? AppTheme.green : AppTheme.primary,
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(10),
                   ),
                 ),
@@ -111,7 +111,7 @@ class TaskItem extends StatelessWidget {
                   Text(
                     task.title,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.primaryColor,
+                      color: task.isDone ? AppTheme.green : theme.primaryColor,
                     ),
                   ),
                   const SizedBox(
@@ -119,27 +119,64 @@ class TaskItem extends StatelessWidget {
                   ),
                   Text(
                     task.description,
-                    style: theme.textTheme.titleSmall,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: task.isDone ? AppTheme.green : theme.primaryColor,
+                    ),
                   ),
                 ],
               ),
               const Spacer(),
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: Container(
-                  height: 34,
-                  width: 69,
-                  decoration: const BoxDecoration(
-                    color: AppTheme.primary,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.check,
-                    size: 32,
-                    color: AppTheme.white,
-                  ),
+                child: InkWell(
+                  onTap: () {
+                    task.isDone = !task.isDone;
+                    FirebaseFunctions.updateTaskInFirestore(task).timeout(
+                      const Duration(microseconds: 100),
+                      onTimeout: () {
+                        Provider.of<TasksProvider>(context, listen: false)
+                            .updateTask(task);
+
+                        if (task.isDone) {
+                          Fluttertoast.showToast(
+                            msg: "If you want to undo Done!, click again on it",
+                            toastLength: Toast.LENGTH_LONG,
+                            timeInSecForIosWeb: 5,
+                            backgroundColor: AppTheme.green,
+                            textColor: AppTheme.white,
+                            fontSize: 15.0,
+                          );
+                        }
+                      },
+                    );
+                  },
+                  child: task.isDone
+                      ? const Center(
+                          child: Text(
+                            'Done!',
+                            style: TextStyle(
+                              color: AppTheme.green,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          height: 34,
+                          width: 69,
+                          decoration: BoxDecoration(
+                            color:
+                                task.isDone ? Colors.green : AppTheme.primary,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.check,
+                            size: 32,
+                            color: AppTheme.white,
+                          ),
+                        ),
                 ),
               ),
             ],
