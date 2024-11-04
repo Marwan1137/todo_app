@@ -1,3 +1,6 @@
+/* -------------------------------------------------------------------------- */
+/*                            Required Imports                                  */
+/* -------------------------------------------------------------------------- */
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -10,27 +13,37 @@ import 'package:todo_app/tabs/tasks/update_task_screen.dart';
 import 'package:todo_app/tabs/settings/settings_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/* -------------------------------------------------------------------------- */
+/*                            Task Item Widget                                  */
+/* -------------------------------------------------------------------------- */
 // ignore: must_be_immutable
 class TaskItem extends StatelessWidget {
   TaskItem(this.task, {super.key});
   TaskModel task;
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     bool isDark = Provider.of<SettingsProvider>(context).isDark;
     bool isArabic = Provider.of<SettingsProvider>(context).languageCode == 'ar';
 
+    /* -------------------------------------------------------------------------- */
+    /*                            Main Container Widget                             */
+    /* -------------------------------------------------------------------------- */
     return Container(
-      margin: const EdgeInsets.symmetric(
-        vertical: 8,
-        horizontal: 20,
-      ),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: Slidable(
+        /* -------------------------------------------------------------------------- */
+        /*                            Left Slide Actions (LTR)                         */
+        /* -------------------------------------------------------------------------- */
         startActionPane: isArabic
             ? null
             : ActionPane(
                 motion: const ScrollMotion(),
                 children: [
+                  /* -------------------------------------------------------------------------- */
+                  /*                            Delete Action Button                             */
+                  /* -------------------------------------------------------------------------- */
                   SlidableAction(
                     onPressed: (_) {
                       FirebaseFunctions.deleteTaskFromFirestore(task.id)
@@ -61,10 +74,11 @@ class TaskItem extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(15),
                   ),
+                  /* -------------------------------------------------------------------------- */
+                  /*                            Edit Action Button                               */
+                  /* -------------------------------------------------------------------------- */
                   if (!task.isDone) ...[
-                    const SizedBox(
-                      width: 5,
-                    ),
+                    const SizedBox(width: 5),
                     SlidableAction(
                       onPressed: (_) {
                         Navigator.of(context).push(
@@ -86,6 +100,10 @@ class TaskItem extends StatelessWidget {
                   ]
                 ],
               ),
+
+        /* -------------------------------------------------------------------------- */
+        /*                            Right Slide Actions (RTL)                         */
+        /* -------------------------------------------------------------------------- */
         endActionPane: isArabic
             ? ActionPane(
                 motion: const ScrollMotion(),
@@ -121,9 +139,7 @@ class TaskItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   if (!task.isDone) ...[
-                    const SizedBox(
-                      width: 5,
-                    ),
+                    const SizedBox(width: 5),
                     SlidableAction(
                       onPressed: (_) {
                         Navigator.of(context).push(
@@ -146,6 +162,10 @@ class TaskItem extends StatelessWidget {
                 ],
               )
             : null,
+
+        /* -------------------------------------------------------------------------- */
+        /*                            Task Content Container                           */
+        /* -------------------------------------------------------------------------- */
         child: Container(
           decoration: BoxDecoration(
             color: isDark ? AppTheme.backgroundDark : AppTheme.white,
@@ -154,10 +174,13 @@ class TaskItem extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              /* -------------------------------------------------------------------------- */
+              /*                            Task Status Indicator                            */
+              /* -------------------------------------------------------------------------- */
               Container(
                 height: 62,
                 width: 4,
-                margin: EdgeInsetsDirectional.only(
+                margin: const EdgeInsetsDirectional.only(
                   start: 15,
                   top: 15,
                   bottom: 15,
@@ -167,6 +190,10 @@ class TaskItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
+
+              /* -------------------------------------------------------------------------- */
+              /*                            Task Details Section                             */
+              /* -------------------------------------------------------------------------- */
               Expanded(
                 child: Padding(
                   padding: const EdgeInsetsDirectional.only(start: 15),
@@ -195,6 +222,10 @@ class TaskItem extends StatelessWidget {
                   ),
                 ),
               ),
+
+              /* -------------------------------------------------------------------------- */
+              /*                            Task Status Toggle Button                        */
+              /* -------------------------------------------------------------------------- */
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: InkWell(

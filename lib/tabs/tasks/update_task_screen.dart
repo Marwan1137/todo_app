@@ -1,3 +1,6 @@
+/* -------------------------------------------------------------------------- */
+/*                            Required Imports                                  */
+/* -------------------------------------------------------------------------- */
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
@@ -10,6 +13,9 @@ import 'package:todo_app/tabs/settings/settings_provider.dart';
 import 'package:todo_app/tabs/tasks/tasks_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/* -------------------------------------------------------------------------- */
+/*                            Update Task Screen Widget                         */
+/* -------------------------------------------------------------------------- */
 class UpdateTaskScreen extends StatefulWidget {
   final TaskModel task;
 
@@ -19,18 +25,30 @@ class UpdateTaskScreen extends StatefulWidget {
   UpdateTaskScreenState createState() => UpdateTaskScreenState(task);
 }
 
+/* -------------------------------------------------------------------------- */
+/*                            Update Task Screen State                          */
+/* -------------------------------------------------------------------------- */
 class UpdateTaskScreenState extends State<UpdateTaskScreen> {
+  /* -------------------------------------------------------------------------- */
+  /*                            Form Variables & Controllers                      */
+  /* -------------------------------------------------------------------------- */
   final formKey = GlobalKey<FormState>();
   late String title;
   late String description;
   late DateTime date;
 
+  /* -------------------------------------------------------------------------- */
+  /*                            Constructor                                       */
+  /* -------------------------------------------------------------------------- */
   UpdateTaskScreenState(TaskModel task) {
     title = task.title;
     description = task.description;
     date = task.date;
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*                            Update Task Method                               */
+  /* -------------------------------------------------------------------------- */
   Future<void> updateTask() async {
     if (formKey.currentState!.validate()) {
       TaskModel updatedTask = TaskModel(
@@ -60,6 +78,9 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    /* -------------------------------------------------------------------------- */
+    /*                            Screen Variables                                 */
+    /* -------------------------------------------------------------------------- */
     double screenHeight = MediaQuery.of(context).size.height;
     bool isDark = Provider.of<SettingsProvider>(context).isDark;
 
@@ -67,6 +88,9 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
+          /* -------------------------------------------------------------------------- */
+          /*                            App Bar Section                                  */
+          /* -------------------------------------------------------------------------- */
           Container(
             height: screenHeight * 0.2,
             width: double.infinity,
@@ -78,6 +102,9 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
               ),
               child: Row(
                 children: [
+                  /* -------------------------------------------------------------------------- */
+                  /*                            Back Button                                      */
+                  /* -------------------------------------------------------------------------- */
                   IconButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -93,6 +120,9 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
                     padding: EdgeInsets.zero,
                   ),
                   const SizedBox(width: 20),
+                  /* -------------------------------------------------------------------------- */
+                  /*                            Screen Title                                     */
+                  /* -------------------------------------------------------------------------- */
                   Text(
                     AppLocalizations.of(context)!.tasks,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -106,6 +136,10 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
               ),
             ),
           ),
+
+          /* -------------------------------------------------------------------------- */
+          /*                            Main Form Container                              */
+          /* -------------------------------------------------------------------------- */
           Padding(
             padding: const EdgeInsets.only(
               top: 20,
@@ -127,6 +161,9 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      /* -------------------------------------------------------------------------- */
+                      /*                            Form Title                                       */
+                      /* -------------------------------------------------------------------------- */
                       Text(
                         AppLocalizations.of(context)!.editTask,
                         textAlign: TextAlign.center,
@@ -137,6 +174,10 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
+
+                      /* -------------------------------------------------------------------------- */
+                      /*                            Title Input Field                                */
+                      /* -------------------------------------------------------------------------- */
                       TextFormField(
                         initialValue: title,
                         decoration: InputDecoration(
@@ -163,6 +204,10 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
                         },
                       ),
                       const SizedBox(height: 20),
+
+                      /* -------------------------------------------------------------------------- */
+                      /*                            Description Input Field                          */
+                      /* -------------------------------------------------------------------------- */
                       TextFormField(
                         initialValue: description,
                         decoration: InputDecoration(
@@ -190,13 +235,19 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
                         },
                       ),
                       const SizedBox(height: 20),
+
+                      /* -------------------------------------------------------------------------- */
+                      /*                            Date Picker Section                              */
+                      /* -------------------------------------------------------------------------- */
                       GestureDetector(
                         onTap: () async {
                           DateTime? pickedDate = await showDatePicker(
                             context: context,
                             initialDate: date,
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2101),
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime.now().add(
+                              const Duration(days: 365),
+                            ),
                           );
                           if (pickedDate != null && pickedDate != date) {
                             setState(() {
@@ -225,6 +276,10 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
                         ),
                       ),
                       const SizedBox(height: 120),
+
+                      /* -------------------------------------------------------------------------- */
+                      /*                            Save Button                                      */
+                      /* -------------------------------------------------------------------------- */
                       ElevatedButton(
                         onPressed: updateTask,
                         style: ElevatedButton.styleFrom(

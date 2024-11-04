@@ -5,6 +5,9 @@ import 'package:todo_app/tabs/settings/language_bottom_sheet.dart';
 import 'package:todo_app/tabs/settings/settings_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+/* -------------------------------------------------------------------------- */
+/*                              Settings Tab Widget                             */
+/* -------------------------------------------------------------------------- */
 class SettingsTab extends StatefulWidget {
   const SettingsTab({super.key});
 
@@ -19,13 +22,23 @@ class _SettingsTabState extends State<SettingsTab> {
     bool isDark = settingsProvider.isDark;
     double screenHeight = MediaQuery.of(context).size.height;
 
+    /* -------------------------------------------------------------------------- */
+    /*                            Main Settings Layout                              */
+    /* -------------------------------------------------------------------------- */
     return Stack(
       children: [
+        /* -------------------------------------------------------------------------- */
+        /*                            Header Background                                */
+        /* -------------------------------------------------------------------------- */
         Container(
           height: screenHeight * 0.35,
           width: double.infinity,
           color: AppTheme.primary,
         ),
+
+        /* -------------------------------------------------------------------------- */
+        /*                            Settings Title                                   */
+        /* -------------------------------------------------------------------------- */
         PositionedDirectional(
           start: 20,
           top: 60,
@@ -37,6 +50,10 @@ class _SettingsTabState extends State<SettingsTab> {
                 ),
           ),
         ),
+
+        /* -------------------------------------------------------------------------- */
+        /*                            Settings Options                                 */
+        /* -------------------------------------------------------------------------- */
         Padding(
           padding: const EdgeInsets.only(top: 120),
           child: Container(
@@ -45,6 +62,9 @@ class _SettingsTabState extends State<SettingsTab> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /* -------------------------------------------------------------------------- */
+                /*                            Language Section                                 */
+                /* -------------------------------------------------------------------------- */
                 Text(
                   AppLocalizations.of(context)!.language,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -91,6 +111,10 @@ class _SettingsTabState extends State<SettingsTab> {
                     ),
                   ),
                 ),
+
+                /* -------------------------------------------------------------------------- */
+                /*                            Theme Section                                    */
+                /* -------------------------------------------------------------------------- */
                 const SizedBox(height: 30),
                 Text(
                   AppLocalizations.of(context)!.theme,

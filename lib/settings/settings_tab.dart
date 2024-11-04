@@ -45,7 +45,7 @@ class SettingsTab extends StatelessWidget {
                 ),
                 child: DropdownButton<String>(
                   value: settingsProvider.languageCode,
-                  items: [
+                  items: const [
                     DropdownMenuItem(value: 'en', child: Text('English')),
                     DropdownMenuItem(value: 'ar', child: Text('العربية')),
                   ],
