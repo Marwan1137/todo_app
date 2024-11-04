@@ -55,5 +55,53 @@ class AppTheme {
     ),
   );
 
-  static ThemeData darkTheme = ThemeData();
+  static ThemeData darkTheme = ThemeData(
+    primaryColor: backgroundDark,
+    scaffoldBackgroundColor: backgroundDark,
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: backgroundDark,
+      selectedItemColor: primary,
+      unselectedItemColor: white,
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+    ),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: primary,
+      foregroundColor: white,
+      shape: CircleBorder(
+        side: BorderSide(
+          color: white,
+          width: 4,
+        ),
+      ),
+    ),
+    textTheme: const TextTheme(
+      titleMedium: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: white, // Changed from black to white
+      ),
+      titleSmall: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+        color: white, // Changed from black to white
+      ),
+      titleLarge: TextStyle(
+        fontSize: 30,
+        fontWeight: FontWeight.bold,
+        color: white,
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primary,
+        textStyle: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w400,
+          color: white,
+        ),
+      ),
+    ),
+  );
 }

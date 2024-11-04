@@ -5,9 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/app_theme.dart';
 import 'package:todo_app/firebase_functions.dart';
 import 'package:todo_app/models/task_model.dart';
+import 'package:todo_app/tabs/settings/settings_provider.dart';
 import 'package:todo_app/tabs/tasks/tasks_provider.dart';
 import 'package:todo_app/widgets/default_elevated_button.dart';
 import 'package:todo_app/widgets/default_text_form_field.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddTasksBottomSheet extends StatefulWidget {
   const AddTasksBottomSheet({super.key});
@@ -26,6 +28,7 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
   @override
   Widget build(BuildContext context) {
     TextStyle? titleMediumStyle = Theme.of(context).textTheme.titleMedium;
+    bool isDark = Provider.of<SettingsProvider>(context).isDark;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -34,58 +37,58 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
       child: Container(
         padding: const EdgeInsets.all(20),
         height: MediaQuery.sizeOf(context).height * 0.5,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.horizontal(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.horizontal(
             left: Radius.circular(15),
             right: Radius.circular(15),
           ),
-          color: AppTheme.white,
+          color: isDark ? AppTheme.backgroundDark : AppTheme.white,
         ),
         child: Form(
           key: formKey,
           child: Column(
             children: [
               Text(
-                'Add new Task',
-                style: titleMediumStyle,
+                AppLocalizations.of(context)!.addNewTask,
+                style: titleMediumStyle?.copyWith(
+                  color: isDark ? AppTheme.white : AppTheme.black,
+                ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(height: 16),
               DefaultTextFormField(
                 controller: titleController,
-                hintText: 'Enter Task Title',
+                hintText: AppLocalizations.of(context)!.enterTaskTitle,
+                isDark: isDark,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Title can not be empty';
+                    return AppLocalizations.of(context)!.titleCannotBeEmpty;
                   }
                   return null;
                 },
               ),
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(height: 16),
               DefaultTextFormField(
                 controller: descriptionController,
-                hintText: 'Enter Task Descriptiom',
+                hintText: AppLocalizations.of(context)!.enterTaskDescription,
+                isDark: isDark,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Description can not be empty';
+                    return AppLocalizations.of(context)!
+                        .descriptionCannotBeEmpty;
                   }
                   return null;
                 },
               ),
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(height: 16),
               Text(
-                'Select Date',
-                style: titleMediumStyle?.copyWith(fontWeight: FontWeight.w500),
+                AppLocalizations.of(context)!.selectDate,
+                style: titleMediumStyle?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? AppTheme.white : AppTheme.black,
+                ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               InkWell(
                 onTap: () async {
                   DateTime? dateTime = await showDatePicker(
@@ -96,20 +99,22 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
                     initialEntryMode: DatePickerEntryMode.calendarOnly,
                   );
                   if (dateTime != null && selectedDate != dateTime) {
-                    selectedDate = dateTime;
+                    setState(() {
+                      selectedDate = dateTime;
+                    });
                   }
-                  setState(() {});
                 },
                 child: Text(
                   dateFormat.format(selectedDate),
                   textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: isDark ? AppTheme.white : AppTheme.black,
+                  ),
                 ),
               ),
-              const SizedBox(
-                height: 30,
-              ),
+              const SizedBox(height: 30),
               DefaultElevatedButton(
-                label: 'Add',
+                label: AppLocalizations.of(context)!.save,
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
                     addTask();
@@ -143,10 +148,8 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
         /* ---------------------------------------------------------------------------------------------- */
         Provider.of<TasksProvider>(context, listen: false).getTasks();
         Fluttertoast.showToast(
-          msg: "Task added successfully",
-          toastLength: Toast
-              .LENGTH_LONG, // long ya3ni hayezhar le modet 5 seconds w lo short hayo3od 2 seconds //
-          // gravity: ToastGravity.CENTER, // el makan ele hayezhar feh //
+          msg: AppLocalizations.of(context)!.taskAdded,
+          toastLength: Toast.LENGTH_LONG,
           timeInSecForIosWeb: 5,
           backgroundColor: Colors.green,
           textColor: Colors.white,
@@ -160,14 +163,13 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
         .catchError(
       (error) {
         Fluttertoast.showToast(
-            msg: "Something went wrong",
-            toastLength: Toast
-                .LENGTH_LONG, // long ya3ni hayezhar le modet 5 seconds w lo short hayo3od 2 seconds //
-            // gravity: ToastGravity.CENTER, // el makan ele hayezhar feh //
-            timeInSecForIosWeb: 5,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0);
+          msg: AppLocalizations.of(context)!.somethingWentWrong,
+          toastLength: Toast.LENGTH_LONG,
+          timeInSecForIosWeb: 5,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       },
     );
   }

@@ -6,7 +6,9 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/app_theme.dart';
 import 'package:todo_app/firebase_functions.dart';
 import 'package:todo_app/models/task_model.dart';
+import 'package:todo_app/tabs/settings/settings_provider.dart';
 import 'package:todo_app/tabs/tasks/tasks_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UpdateTaskScreen extends StatefulWidget {
   final TaskModel task;
@@ -43,7 +45,7 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
         onTimeout: () {
           Provider.of<TasksProvider>(context, listen: false).getTasks();
           Fluttertoast.showToast(
-            msg: "Task updated successfully",
+            msg: AppLocalizations.of(context)!.taskUpdated,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             backgroundColor: Colors.green,
@@ -59,6 +61,7 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    bool isDark = Provider.of<SettingsProvider>(context).isDark;
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -69,25 +72,53 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
             width: double.infinity,
             color: AppTheme.primary,
             child: Padding(
-              padding: const EdgeInsets.only(top: 60.0, left: 20.0),
-              child: Text(
-                'To Do List',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              padding: const EdgeInsetsDirectional.only(
+                top: 5.0,
+                start: 20.0,
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(
+                      Provider.of<SettingsProvider>(context).languageCode ==
+                              'ar'
+                          ? Icons.arrow_forward_ios
+                          : Icons.arrow_back_ios_new,
                       color: AppTheme.white,
-                      fontSize: 22,
+                      size: 24,
                     ),
+                    padding: EdgeInsets.zero,
+                  ),
+                  const SizedBox(width: 20),
+                  Text(
+                    AppLocalizations.of(context)!.tasks,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Provider.of<SettingsProvider>(context).isDark
+                              ? AppTheme.backgroundDark
+                              : AppTheme.white,
+                          fontSize: 22,
+                        ),
+                  ),
+                ],
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(
+              top: 20,
+              right: 20,
+              left: 20,
+            ),
             child: Container(
               height: screenHeight * 0.7,
               margin:
                   const EdgeInsets.symmetric(horizontal: 20.0, vertical: 100.0),
               padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
-                color: AppTheme.white,
+                color: isDark ? AppTheme.backgroundDark : AppTheme.white,
                 borderRadius: BorderRadius.circular(15),
               ),
               child: SingleChildScrollView(
@@ -96,25 +127,37 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Text(
-                        'Edit Task',
+                      Text(
+                        AppLocalizations.of(context)!.editTask,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: isDark ? AppTheme.white : Colors.black87,
                         ),
                       ),
                       const SizedBox(height: 20),
                       TextFormField(
                         initialValue: title,
-                        decoration: const InputDecoration(
-                          labelText: 'Task title',
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context)!.taskTitle,
+                          labelStyle: TextStyle(
+                            color: isDark ? AppTheme.white : Colors.grey,
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: isDark ? AppTheme.white : Colors.grey,
+                            ),
+                          ),
+                        ),
+                        style: TextStyle(
+                          color: isDark ? AppTheme.white : Colors.black,
                         ),
                         onChanged: (value) => title = value,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter a title';
+                            return AppLocalizations.of(context)!
+                                .titleCannotBeEmpty;
                           }
                           return null;
                         },
@@ -122,13 +165,26 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
                       const SizedBox(height: 20),
                       TextFormField(
                         initialValue: description,
-                        decoration: const InputDecoration(
-                          labelText: 'Task description',
+                        decoration: InputDecoration(
+                          labelText:
+                              AppLocalizations.of(context)!.taskDescription,
+                          labelStyle: TextStyle(
+                            color: isDark ? AppTheme.white : Colors.grey,
+                          ),
+                          enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              color: isDark ? AppTheme.white : Colors.grey,
+                            ),
+                          ),
+                        ),
+                        style: TextStyle(
+                          color: isDark ? AppTheme.white : Colors.black,
                         ),
                         onChanged: (value) => description = value,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter a description';
+                            return AppLocalizations.of(context)!
+                                .descriptionCannotBeEmpty;
                           }
                           return null;
                         },
@@ -149,13 +205,21 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
                           }
                         },
                         child: InputDecorator(
-                          decoration: const InputDecoration(
-                            labelText: 'Select date',
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)!.selectDate,
+                            labelStyle: TextStyle(
+                              color: isDark ? AppTheme.white : Colors.grey,
+                            ),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: isDark ? AppTheme.white : Colors.grey,
+                              ),
+                            ),
                           ),
                           child: Text(
                             "${date.toLocal()}".split(' ')[0],
-                            style: const TextStyle(
-                              color: Colors.grey,
+                            style: TextStyle(
+                              color: isDark ? AppTheme.white : Colors.grey,
                             ),
                           ),
                         ),
@@ -170,9 +234,9 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 12.0),
                         ),
-                        child: const Text(
-                          'Save Changes',
-                          style: TextStyle(
+                        child: Text(
+                          AppLocalizations.of(context)!.saveChanges,
+                          style: const TextStyle(
                             color: AppTheme.white,
                             fontSize: 16,
                           ),

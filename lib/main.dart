@@ -1,18 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/tabs/settings/settings_provider.dart';
 import 'package:todo_app/tabs/tasks/tasks_provider.dart';
 import 'home_screen.dart';
 import 'app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseFirestore.instance.disableNetwork();
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => TasksProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TasksProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
+      ],
       child: const TodoApp(),
     ),
   );
@@ -21,18 +26,35 @@ Future<void> main() async {
 class TodoApp extends StatelessWidget {
   const TodoApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      routes: {
-        HomeScreen.routname: (_) => const HomeScreen(),
+    return Consumer<SettingsProvider>(
+      builder: (context, settingsProvider, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          routes: {
+            HomeScreen.routname: (_) => const HomeScreen(),
+          },
+          initialRoute: HomeScreen.routname,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: settingsProvider.themeMode,
+          locale: Locale(settingsProvider.languageCode),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: const [
+            Locale('en'),
+            Locale('ar'),
+          ],
+          builder: (context, child) {
+            return Directionality(
+              textDirection: settingsProvider.languageCode == 'ar'
+                  ? TextDirection.rtl
+                  : TextDirection.ltr,
+              child: child!,
+            );
+          },
+        );
       },
-      initialRoute: HomeScreen.routname,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
     );
   }
 }

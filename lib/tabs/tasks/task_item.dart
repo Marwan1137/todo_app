@@ -7,6 +7,8 @@ import 'package:todo_app/models/task_model.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_app/tabs/tasks/tasks_provider.dart';
 import 'package:todo_app/tabs/tasks/update_task_screen.dart';
+import 'package:todo_app/tabs/settings/settings_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // ignore: must_be_immutable
 class TaskItem extends StatelessWidget {
@@ -15,6 +17,8 @@ class TaskItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    bool isDark = Provider.of<SettingsProvider>(context).isDark;
+    bool isArabic = Provider.of<SettingsProvider>(context).languageCode == 'ar';
 
     return Container(
       margin: const EdgeInsets.symmetric(
@@ -22,110 +26,175 @@ class TaskItem extends StatelessWidget {
         horizontal: 20,
       ),
       child: Slidable(
-        startActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          children: [
-            SlidableAction(
-              onPressed: (_) {
-                FirebaseFunctions.deleteTaskFromFirestore(task.id)
-                    .timeout(
-                  const Duration(microseconds: 100),
-                  onTimeout: () =>
-                      Provider.of<TasksProvider>(context, listen: false)
-                          .getTasks(),
-                )
-                    .catchError(
-                  (_) {
-                    Fluttertoast.showToast(
-                      msg: "Task deleted successfully",
-                      toastLength: Toast
-                          .LENGTH_LONG, // long ya3ni hayezhar le modet 5 seconds w lo short hayo3od 2 seconds //
-                      // gravity: ToastGravity.CENTER, // el makan ele hayezhar feh //
-                      timeInSecForIosWeb: 5,
-                      backgroundColor: AppTheme.green,
-                      textColor: AppTheme.white,
-                      fontSize: 16.0,
-                    );
-                  },
-                );
-              },
-              backgroundColor: AppTheme.red,
-              foregroundColor: AppTheme.white,
-              icon: Icons.delete,
-              label: 'Delete',
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 10,
-              ),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            SlidableAction(
-              onPressed: (_) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => UpdateTaskScreen(task: task),
+        startActionPane: isArabic
+            ? null
+            : ActionPane(
+                motion: const ScrollMotion(),
+                children: [
+                  SlidableAction(
+                    onPressed: (_) {
+                      FirebaseFunctions.deleteTaskFromFirestore(task.id)
+                          .timeout(
+                        const Duration(microseconds: 100),
+                        onTimeout: () =>
+                            Provider.of<TasksProvider>(context, listen: false)
+                                .getTasks(),
+                      )
+                          .catchError((_) {
+                        Fluttertoast.showToast(
+                          msg: AppLocalizations.of(context)!.taskDeleted,
+                          toastLength: Toast.LENGTH_LONG,
+                          timeInSecForIosWeb: 5,
+                          backgroundColor: AppTheme.green,
+                          textColor: AppTheme.white,
+                          fontSize: 16.0,
+                        );
+                      });
+                    },
+                    backgroundColor: AppTheme.red,
+                    foregroundColor: AppTheme.white,
+                    icon: Icons.delete,
+                    label: AppLocalizations.of(context)!.delete,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                );
-              },
-              backgroundColor: AppTheme.primary,
-              foregroundColor: AppTheme.white,
-              icon: Icons.edit,
-              label: 'Edit',
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 10,
+                  if (!task.isDone) ...[
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    SlidableAction(
+                      onPressed: (_) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => UpdateTaskScreen(task: task),
+                          ),
+                        );
+                      },
+                      backgroundColor: AppTheme.primary,
+                      foregroundColor: AppTheme.white,
+                      icon: Icons.edit,
+                      label: AppLocalizations.of(context)!.edit,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 10,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ]
+                ],
               ),
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ],
-        ),
+        endActionPane: isArabic
+            ? ActionPane(
+                motion: const ScrollMotion(),
+                children: [
+                  SlidableAction(
+                    onPressed: (_) {
+                      FirebaseFunctions.deleteTaskFromFirestore(task.id)
+                          .timeout(
+                        const Duration(microseconds: 100),
+                        onTimeout: () =>
+                            Provider.of<TasksProvider>(context, listen: false)
+                                .getTasks(),
+                      )
+                          .catchError((_) {
+                        Fluttertoast.showToast(
+                          msg: AppLocalizations.of(context)!.taskDeleted,
+                          toastLength: Toast.LENGTH_LONG,
+                          timeInSecForIosWeb: 5,
+                          backgroundColor: AppTheme.green,
+                          textColor: AppTheme.white,
+                          fontSize: 16.0,
+                        );
+                      });
+                    },
+                    backgroundColor: AppTheme.red,
+                    foregroundColor: AppTheme.white,
+                    icon: Icons.delete,
+                    label: AppLocalizations.of(context)!.delete,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  if (!task.isDone) ...[
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    SlidableAction(
+                      onPressed: (_) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => UpdateTaskScreen(task: task),
+                          ),
+                        );
+                      },
+                      backgroundColor: AppTheme.primary,
+                      foregroundColor: AppTheme.white,
+                      icon: Icons.edit,
+                      label: AppLocalizations.of(context)!.edit,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 10,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ]
+                ],
+              )
+            : null,
         child: Container(
-          decoration: const BoxDecoration(
-            color: AppTheme.white,
-            borderRadius: BorderRadius.all(
-              Radius.circular(15),
-            ),
+          decoration: BoxDecoration(
+            color: isDark ? AppTheme.backgroundDark : AppTheme.white,
+            borderRadius: BorderRadius.circular(15),
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 height: 62,
                 width: 4,
-                margin: const EdgeInsetsDirectional.all(
-                  15,
+                margin: EdgeInsetsDirectional.only(
+                  start: 15,
+                  top: 15,
+                  bottom: 15,
                 ),
                 decoration: BoxDecoration(
                   color: task.isDone ? AppTheme.green : AppTheme.primary,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(10),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.only(start: 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        task.title,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: task.isDone
+                              ? AppTheme.green
+                              : (isDark ? AppTheme.white : AppTheme.primary),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        task.description,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: task.isDone
+                              ? AppTheme.green
+                              : (isDark ? AppTheme.white : AppTheme.primary),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    task.title,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: task.isDone ? AppTheme.green : theme.primaryColor,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    task.description,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: task.isDone ? AppTheme.green : theme.primaryColor,
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: InkWell(
@@ -139,7 +208,7 @@ class TaskItem extends StatelessWidget {
 
                         if (task.isDone) {
                           Fluttertoast.showToast(
-                            msg: "If you want to undo Done!, click again on it",
+                            msg: AppLocalizations.of(context)!.undoDoneMessage,
                             toastLength: Toast.LENGTH_LONG,
                             timeInSecForIosWeb: 5,
                             backgroundColor: AppTheme.green,
@@ -151,10 +220,10 @@ class TaskItem extends StatelessWidget {
                     );
                   },
                   child: task.isDone
-                      ? const Center(
+                      ? Center(
                           child: Text(
-                            'Done!',
-                            style: TextStyle(
+                            AppLocalizations.of(context)!.done,
+                            style: const TextStyle(
                               color: AppTheme.green,
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
@@ -165,11 +234,8 @@ class TaskItem extends StatelessWidget {
                           height: 34,
                           width: 69,
                           decoration: BoxDecoration(
-                            color:
-                                task.isDone ? Colors.green : AppTheme.primary,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(10),
-                            ),
+                            color: AppTheme.primary,
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: const Icon(
                             Icons.check,

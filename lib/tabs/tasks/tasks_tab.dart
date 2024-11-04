@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/app_theme.dart';
+import 'package:todo_app/tabs/settings/settings_provider.dart';
 import 'package:todo_app/tabs/tasks/tasks_provider.dart';
 import 'task_item.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TasksTab extends StatefulWidget {
   const TasksTab({super.key});
@@ -35,9 +37,11 @@ class _TasksTabState extends State<TasksTab> {
               start: 20,
               top: 40,
               child: Text(
-                'ToDo List',
+                AppLocalizations.of(context)!.appTitle,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppTheme.white,
+                      color: Provider.of<SettingsProvider>(context).isDark
+                          ? AppTheme.backgroundDark
+                          : AppTheme.white,
                       fontSize: 22,
                     ),
               ),
@@ -89,18 +93,24 @@ class _TasksTabState extends State<TasksTab> {
                   /* -------------------------------------------------------------------------- */
                   todayStyle: DayStyle(
                     decoration: BoxDecoration(
-                      color: AppTheme.white,
+                      color: Provider.of<SettingsProvider>(context).isDark
+                          ? AppTheme.backgroundDark
+                          : AppTheme.white,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    dayNumStyle: const TextStyle(
+                    dayNumStyle: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.black,
+                      color: Provider.of<SettingsProvider>(context).isDark
+                          ? AppTheme.white
+                          : AppTheme.black,
                     ),
-                    dayStrStyle: const TextStyle(
+                    dayStrStyle: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.black,
+                      color: Provider.of<SettingsProvider>(context).isDark
+                          ? AppTheme.white
+                          : AppTheme.black,
                     ),
                   ),
 
@@ -109,18 +119,24 @@ class _TasksTabState extends State<TasksTab> {
                   /* -------------------------------------------------------------------------- */
                   inactiveDayStyle: DayStyle(
                     decoration: BoxDecoration(
-                      color: AppTheme.white,
+                      color: Provider.of<SettingsProvider>(context).isDark
+                          ? AppTheme.backgroundDark
+                          : AppTheme.white,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    dayNumStyle: const TextStyle(
+                    dayNumStyle: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.black,
+                      color: Provider.of<SettingsProvider>(context).isDark
+                          ? AppTheme.white
+                          : AppTheme.black,
                     ),
-                    dayStrStyle: const TextStyle(
+                    dayStrStyle: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.black,
+                      color: Provider.of<SettingsProvider>(context).isDark
+                          ? AppTheme.white
+                          : AppTheme.black,
                     ),
                   ),
                 ),
