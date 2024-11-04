@@ -21,6 +21,11 @@ class AppTheme {
   /* -------------------------------------------------------------------------- */
   static ThemeData lightTheme = ThemeData(
     primaryColor: primary,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      centerTitle: true,
+    ),
     scaffoldBackgroundColor: backgroundLight,
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       type: BottomNavigationBarType.fixed,
@@ -69,6 +74,11 @@ class AppTheme {
   /* -------------------------------------------------------------------------- */
   static ThemeData darkTheme = ThemeData(
     primaryColor: backgroundDark,
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      centerTitle: true,
+    ),
     scaffoldBackgroundColor: backgroundDark,
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       type: BottomNavigationBarType.fixed,

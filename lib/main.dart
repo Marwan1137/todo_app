@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/auth/login_screen.dart';
+import 'package:todo_app/auth/register_screen.dart';
 import 'package:todo_app/tabs/settings/settings_provider.dart';
 import 'package:todo_app/tabs/tasks/tasks_provider.dart';
 import 'home_screen.dart';
@@ -41,9 +43,11 @@ class TodoApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           routes: {
+            LoginScreen.routName: (_) => LoginScreen(),
+            RegisterScreen.routName: (_) => RegisterScreen(),
             HomeScreen.routname: (_) => const HomeScreen(),
           },
-          initialRoute: HomeScreen.routname,
+          initialRoute: LoginScreen.routName,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: settingsProvider.themeMode,
