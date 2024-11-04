@@ -12,11 +12,19 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseFirestore.instance.disableNetwork();
+
+  final settingsProvider = SettingsProvider();
+  await settingsProvider.loadSettings();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => TasksProvider()),
-        ChangeNotifierProvider(create: (_) => SettingsProvider()),
+        ChangeNotifierProvider.value(
+          value: settingsProvider,
+        ),
+        ChangeNotifierProvider(
+          create: (context) => TasksProvider(),
+        ),
       ],
       child: const TodoApp(),
     ),
