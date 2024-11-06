@@ -26,28 +26,19 @@ class _HomeScreenState extends State<HomeScreen> {
       body: tabs[currentTabIndex],
 
       /* -------------------------------------------------------------------------- */
-      /*                  bottom side of the app in the home screen                 */
+      /*                            Bottom Navigation Bar                            */
       /* -------------------------------------------------------------------------- */
-
-      /* ------------------------ Section 1: bottom nav bar ----------------------- */
       bottomNavigationBar: BottomAppBar(
-        /* -------------------------------------------------------------------------- */
-        /*                       to make the nav bar with notch                       */
-        /* -------------------------------------------------------------------------- */
         shape: const CircularNotchedRectangle(),
         notchMargin: 8,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         color: AppTheme.white,
         padding: EdgeInsets.zero,
-        /* -------------------------------------------------------------------------- */
         child: BottomNavigationBar(
           currentIndex: currentTabIndex,
-          onTap: (index) => setState(
-            () => currentTabIndex = index,
-          ),
+          onTap: (index) => setState(() => currentTabIndex = index),
           elevation: 0,
           items: const [
-            /* -------------------- the 2 icons of the bottom navbar -------------------- */
             BottomNavigationBarItem(
               label: 'Tasks',
               icon: Icon(Icons.list),
@@ -61,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       /* -------------------------------------------------------------------------- */
-      /*                       floating action button section                       */
+      /*                            Floating Action Button                           */
       /* -------------------------------------------------------------------------- */
       floatingActionButton: FloatingActionButton(
         onPressed: () => showModalBottomSheet(

@@ -1,25 +1,38 @@
 /* -------------------------------------------------------------------------- */
-/*                            Language Model Class                              */
+/*                            User Model Class                                  */
 /* -------------------------------------------------------------------------- */
-class Language {
+class UserModel {
   /* -------------------------------------------------------------------------- */
   /*                            Properties                                        */
   /* -------------------------------------------------------------------------- */
+  final String id;
   final String name;
-  final String code;
+  final String email;
 
   /* -------------------------------------------------------------------------- */
   /*                            Constructor                                       */
   /* -------------------------------------------------------------------------- */
-  Language({required this.name, required this.code});
+  UserModel({
+    required this.id,
+    required this.name,
+    required this.email,
+  });
 
   /* -------------------------------------------------------------------------- */
-  /*                            Available Languages List                          */
+  /*                            JSON Conversion Methods                           */
   /* -------------------------------------------------------------------------- */
-  static List<Language> languageList() {
-    return <Language>[
-      Language(name: 'English', code: 'en'),
-      Language(name: 'العربية', code: 'ar'),
-    ];
+  UserModel.fromJson(Map<String, dynamic> json)
+      : this(
+          id: json['id'],
+          name: json['name'],
+          email: json['email'],
+        );
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+    };
   }
 }

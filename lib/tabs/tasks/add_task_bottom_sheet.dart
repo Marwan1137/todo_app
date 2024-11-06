@@ -13,6 +13,7 @@ import 'package:todo_app/tabs/tasks/tasks_provider.dart';
 import 'package:todo_app/widgets/default_elevated_button.dart';
 import 'package:todo_app/widgets/default_text_form_field.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 /* -------------------------------------------------------------------------- */
 /*                            Add Task Bottom Sheet Widget                      */
@@ -88,7 +89,6 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
                 DefaultTextFormField(
                   controller: titleController,
                   hintText: AppLocalizations.of(context)!.enterTaskTitle,
-                  isDark: isDark,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return AppLocalizations.of(context)!.titleCannotBeEmpty;
@@ -104,7 +104,6 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
                 DefaultTextFormField(
                   controller: descriptionController,
                   hintText: AppLocalizations.of(context)!.enterTaskDescription,
-                  isDark: isDark,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return AppLocalizations.of(context)!
@@ -173,49 +172,57 @@ class _AddTasksBottomSheetState extends State<AddTasksBottomSheet> {
   /* -------------------------------------------------------------------------- */
   /*                            Task Addition Method                              */
   /* -------------------------------------------------------------------------- */
-  void addTask() {
+  void addTask() async {
+    if (!formKey.currentState!.validate()) return;
+
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    if (userId == null) return;
+
+    // Normalize the date to midnight
+    DateTime normalizedDate = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+    );
+
+    // Create task with userId and normalized date
     TaskModel task = TaskModel(
       title: titleController.text,
       description: descriptionController.text,
-      date: selectedDate,
+      date: normalizedDate,
+      userId: userId,
     );
 
-    /* -------------------------------------------------------------------------- */
-    /*                            Firebase Task Addition                           */
-    /* -------------------------------------------------------------------------- */
-    FirebaseFunctions.addTaskToFirestore(task)
-        /* -------------------------------------------------------------------------- */
-        /*                            Success Handler                                  */
-        /* -------------------------------------------------------------------------- */
-        .timeout(
-      const Duration(),
-      onTimeout: () {
-        Navigator.of(context).pop();
-        Provider.of<TasksProvider>(context, listen: false).getTasks();
-        Fluttertoast.showToast(
-          msg: AppLocalizations.of(context)!.taskAdded,
-          toastLength: Toast.LENGTH_LONG,
-          timeInSecForIosWeb: 5,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      },
-    )
-        /* -------------------------------------------------------------------------- */
-        /*                            Error Handler                                    */
-        /* -------------------------------------------------------------------------- */
-        .catchError(
-      (error) {
-        Fluttertoast.showToast(
-          msg: AppLocalizations.of(context)!.somethingWentWrong,
-          toastLength: Toast.LENGTH_LONG,
-          timeInSecForIosWeb: 5,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-      },
-    );
+    try {
+      final tasksProvider = Provider.of<TasksProvider>(context, listen: false);
+
+      // Add to Firebase
+      await FirebaseFunctions.addTaskToFirestore(task, userId);
+
+      // Force refresh tasks
+      await tasksProvider.getTasks(userId);
+
+      if (!context.mounted) return;
+      Navigator.of(context).pop();
+
+      Fluttertoast.showToast(
+        msg: AppLocalizations.of(context)!.taskAdded,
+        toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    } catch (error) {
+      print('Error adding task: $error'); // Debug log
+      if (!context.mounted) return;
+
+      Fluttertoast.showToast(
+        msg: AppLocalizations.of(context)!.somethingWentWrong,
+        toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
   }
 }

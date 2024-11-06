@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/app_theme.dart';
+import 'package:todo_app/auth/user_provider.dart';
 import 'package:todo_app/tabs/settings/settings_provider.dart';
 import 'package:todo_app/tabs/tasks/tasks_provider.dart';
 import 'task_item.dart';
@@ -17,11 +18,22 @@ class TasksTab extends StatefulWidget {
 class _TasksTabState extends State<TasksTab> {
   bool shouldGetTasks = true;
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      String userId =
+          Provider.of<UserProvider>(context, listen: false).userModel!.id;
+      Provider.of<TasksProvider>(context, listen: false).setUserId(userId);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.sizeOf(context).height;
     TasksProvider tasksProvider = Provider.of<TasksProvider>(context);
+    String userId = Provider.of<UserProvider>(context).userModel!.id;
     if (shouldGetTasks) {
-      tasksProvider.getTasks();
+      tasksProvider.getTasks(userId);
       shouldGetTasks = false;
     }
     return Column(
@@ -59,9 +71,9 @@ class _TasksTabState extends State<TasksTab> {
                 lastDate: DateTime.now().add(
                   const Duration(days: 365),
                 ),
-                onDateChange: (selectedDate) => {
-                  tasksProvider.changeSelectedDate(selectedDate),
-                  tasksProvider.getTasks(),
+                onDateChange: (selectedDate) {
+                  tasksProvider.changeSelectedDate(selectedDate, userId);
+                  tasksProvider.getTasks(userId);
                 },
                 showTimelineHeader: false,
                 activeColor: AppTheme.white,

@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 /* -------------------------------------------------------------------------- */
 /*                            Required Imports                                  */
 /* -------------------------------------------------------------------------- */
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +15,8 @@ import 'package:todo_app/tabs/tasks/tasks_provider.dart';
 import 'package:todo_app/tabs/tasks/update_task_screen.dart';
 import 'package:todo_app/tabs/settings/settings_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 /* -------------------------------------------------------------------------- */
 /*                            Task Item Widget                                  */
@@ -45,33 +50,58 @@ class TaskItem extends StatelessWidget {
                   /*                            Delete Action Button                             */
                   /* -------------------------------------------------------------------------- */
                   SlidableAction(
-                    onPressed: (_) {
-                      FirebaseFunctions.deleteTaskFromFirestore(task.id)
-                          .timeout(
-                        const Duration(microseconds: 100),
-                        onTimeout: () =>
-                            Provider.of<TasksProvider>(context, listen: false)
-                                .getTasks(),
-                      )
-                          .catchError((_) {
+                    onPressed: (_) async {
+                      try {
+                        final userId = FirebaseAuth.instance.currentUser?.uid;
+                        if (userId == null) return;
+
+                        print('Deleting task with ID: ${task.id}'); // Debug log
+
+                        // Check if task ID exists
+                        if (task.id.isEmpty) {
+                          throw Exception('Task ID is empty');
+                        }
+
+                        // Delete from Firebase
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(userId)
+                            .collection('tasks')
+                            .doc(task.id)
+                            .delete();
+
+                        // Update UI
+                        if (!context.mounted) return;
+                        await Provider.of<TasksProvider>(context, listen: false)
+                            .getTasks(userId);
+
+                        if (!context.mounted) return;
                         Fluttertoast.showToast(
                           msg: AppLocalizations.of(context)!.taskDeleted,
                           toastLength: Toast.LENGTH_LONG,
-                          timeInSecForIosWeb: 5,
                           backgroundColor: AppTheme.green,
                           textColor: AppTheme.white,
                           fontSize: 16.0,
                         );
-                      });
+                      } catch (e) {
+                        print('Error deleting task: $e'); // Debug log
+                        if (!context.mounted) return;
+
+                        Fluttertoast.showToast(
+                          msg: AppLocalizations.of(context)!.somethingWentWrong,
+                          toastLength: Toast.LENGTH_LONG,
+                          backgroundColor: AppTheme.red,
+                          textColor: AppTheme.white,
+                          fontSize: 16.0,
+                        );
+                      }
                     },
                     backgroundColor: AppTheme.red,
                     foregroundColor: AppTheme.white,
                     icon: Icons.delete,
                     label: AppLocalizations.of(context)!.delete,
                     padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 10,
-                    ),
+                        vertical: 10, horizontal: 10),
                     borderRadius: BorderRadius.circular(15),
                   ),
                   /* -------------------------------------------------------------------------- */
@@ -92,9 +122,7 @@ class TaskItem extends StatelessWidget {
                       icon: Icons.edit,
                       label: AppLocalizations.of(context)!.edit,
                       padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 10,
-                      ),
+                          vertical: 10, horizontal: 10),
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ]
@@ -109,15 +137,32 @@ class TaskItem extends StatelessWidget {
                 motion: const ScrollMotion(),
                 children: [
                   SlidableAction(
-                    onPressed: (_) {
-                      FirebaseFunctions.deleteTaskFromFirestore(task.id)
-                          .timeout(
-                        const Duration(microseconds: 100),
-                        onTimeout: () =>
-                            Provider.of<TasksProvider>(context, listen: false)
-                                .getTasks(),
-                      )
-                          .catchError((_) {
+                    onPressed: (_) async {
+                      try {
+                        final userId = FirebaseAuth.instance.currentUser?.uid;
+                        if (userId == null) return;
+
+                        print('Deleting task with ID: ${task.id}'); // Debug log
+
+                        // Check if task ID exists
+                        if (task.id.isEmpty) {
+                          throw Exception('Task ID is empty');
+                        }
+
+                        // Delete from Firebase
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(userId)
+                            .collection('tasks')
+                            .doc(task.id)
+                            .delete();
+
+                        // Update UI
+                        if (!context.mounted) return;
+                        await Provider.of<TasksProvider>(context, listen: false)
+                            .getTasks(userId);
+
+                        if (!context.mounted) return;
                         Fluttertoast.showToast(
                           msg: AppLocalizations.of(context)!.taskDeleted,
                           toastLength: Toast.LENGTH_LONG,
@@ -126,7 +171,18 @@ class TaskItem extends StatelessWidget {
                           textColor: AppTheme.white,
                           fontSize: 16.0,
                         );
-                      });
+                      } catch (e) {
+                        print('Error deleting task: $e'); // Debug log
+                        if (!context.mounted) return;
+
+                        Fluttertoast.showToast(
+                          msg: AppLocalizations.of(context)!.somethingWentWrong,
+                          toastLength: Toast.LENGTH_LONG,
+                          backgroundColor: AppTheme.red,
+                          textColor: AppTheme.white,
+                          fontSize: 16.0,
+                        );
+                      }
                     },
                     backgroundColor: AppTheme.red,
                     foregroundColor: AppTheme.white,
@@ -174,26 +230,16 @@ class TaskItem extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              /* -------------------------------------------------------------------------- */
-              /*                            Task Status Indicator                            */
-              /* -------------------------------------------------------------------------- */
               Container(
                 height: 62,
                 width: 4,
                 margin: const EdgeInsetsDirectional.only(
-                  start: 15,
-                  top: 15,
-                  bottom: 15,
-                ),
+                    start: 15, top: 15, bottom: 15),
                 decoration: BoxDecoration(
                   color: task.isDone ? AppTheme.green : AppTheme.primary,
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-
-              /* -------------------------------------------------------------------------- */
-              /*                            Task Details Section                             */
-              /* -------------------------------------------------------------------------- */
               Expanded(
                 child: Padding(
                   padding: const EdgeInsetsDirectional.only(start: 15),
@@ -222,33 +268,57 @@ class TaskItem extends StatelessWidget {
                   ),
                 ),
               ),
-
-              /* -------------------------------------------------------------------------- */
-              /*                            Task Status Toggle Button                        */
-              /* -------------------------------------------------------------------------- */
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: InkWell(
-                  onTap: () {
-                    task.isDone = !task.isDone;
-                    FirebaseFunctions.updateTaskInFirestore(task).timeout(
-                      const Duration(microseconds: 100),
-                      onTimeout: () {
-                        Provider.of<TasksProvider>(context, listen: false)
-                            .updateTask(task);
+                  onTap: () async {
+                    try {
+                      final currentUser = FirebaseAuth.instance.currentUser;
+                      if (currentUser == null) {
+                        throw Exception('No user logged in');
+                      }
 
-                        if (task.isDone) {
-                          Fluttertoast.showToast(
-                            msg: AppLocalizations.of(context)!.undoDoneMessage,
-                            toastLength: Toast.LENGTH_LONG,
-                            timeInSecForIosWeb: 5,
-                            backgroundColor: AppTheme.green,
-                            textColor: AppTheme.white,
-                            fontSize: 15.0,
-                          );
-                        }
-                      },
-                    );
+                      final String userId =
+                          Provider.of<SettingsProvider>(context, listen: false)
+                              .userId;
+                      final String finalUserId =
+                          userId.isEmpty ? currentUser.uid : userId;
+
+                      final bool newIsDone = !task.isDone;
+                      final TaskModel updatedTask = TaskModel(
+                        id: task.id,
+                        title: task.title,
+                        description: task.description,
+                        date: task.date,
+                        isDone: newIsDone,
+                      );
+
+                      // Update in Firebase first
+                      await FirebaseFunctions.updateTaskInFirestore(
+                          updatedTask, finalUserId);
+
+                      // Force refresh tasks after update
+                      await Provider.of<TasksProvider>(context, listen: false)
+                          .getTasks(finalUserId);
+
+                      if (updatedTask.isDone) {
+                        Fluttertoast.showToast(
+                          msg: AppLocalizations.of(context)!.undoDoneMessage,
+                          toastLength: Toast.LENGTH_LONG,
+                          backgroundColor: AppTheme.green,
+                          textColor: AppTheme.white,
+                        );
+                      }
+                    } catch (e) {
+                      Fluttertoast.showToast(
+                        msg: e.toString().contains('No user logged in')
+                            ? 'Please login to update tasks'
+                            : 'Failed to update task status',
+                        toastLength: Toast.LENGTH_LONG,
+                        backgroundColor: AppTheme.red,
+                        textColor: AppTheme.white,
+                      );
+                    }
                   },
                   child: task.isDone
                       ? Center(

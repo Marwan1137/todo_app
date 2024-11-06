@@ -2,34 +2,47 @@
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 /* -------------------------------------------------------------------------- */
-/*                            Settings Provider Class                           */
+/*                            Settings Provider                                 */
 /* -------------------------------------------------------------------------- */
 class SettingsProvider extends ChangeNotifier {
-  // Keys for SharedPreferences
+  /* -------------------------------------------------------------------------- */
+  /*                                 Constants                                    */
+  /* -------------------------------------------------------------------------- */
   static const String THEME_KEY = "theme";
   static const String LANGUAGE_KEY = "language";
 
+  /* -------------------------------------------------------------------------- */
+  /*                              State Variables                                 */
+  /* -------------------------------------------------------------------------- */
   ThemeMode themeMode = ThemeMode.light;
   String languageCode = 'en';
   bool get isDark => themeMode == ThemeMode.dark;
 
-  // Initialize settings from SharedPreferences
+  String _userId = '';
+  String get userId => _userId;
+
+  /* -------------------------------------------------------------------------- */
+  /*                                Constructor                                   */
+  /* -------------------------------------------------------------------------- */
   SettingsProvider() {
+    themeMode = ThemeMode.dark;
     loadSettings();
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*                            Settings Management                              */
+  /* -------------------------------------------------------------------------- */
   Future<void> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
 
-    // Load theme
     final bool? isDark = prefs.getBool(THEME_KEY);
     if (isDark != null) {
       themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
     }
 
-    // Load language
     final String? savedLanguage = prefs.getString(LANGUAGE_KEY);
     if (savedLanguage != null) {
       languageCode = savedLanguage;
@@ -38,14 +51,18 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setUserId(String id) {
+    _userId = id;
+    notifyListeners();
+  }
+
   /* -------------------------------------------------------------------------- */
-  /*                            Language Change Handler                           */
+  /*                            Language Management                              */
   /* -------------------------------------------------------------------------- */
   void changeLanguage(String selectedLanguage) async {
     if (selectedLanguage == languageCode) return;
     languageCode = selectedLanguage;
 
-    // Save to SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(LANGUAGE_KEY, selectedLanguage);
 
@@ -53,16 +70,30 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   /* -------------------------------------------------------------------------- */
-  /*                            Theme Change Handler                              */
+  /*                             Theme Management                                */
   /* -------------------------------------------------------------------------- */
   void changeTheme(ThemeMode selectedTheme) async {
     if (themeMode == selectedTheme) return;
     themeMode = selectedTheme;
 
-    // Save to SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(THEME_KEY, selectedTheme == ThemeMode.dark);
 
     notifyListeners();
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                           User Data Management                              */
+  /* -------------------------------------------------------------------------- */
+  Future<void> initialize() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        _userId = currentUser.uid;
+        notifyListeners();
+      }
+    } catch (e) {
+      throw Exception('Failed to initialize settings: $e');
+    }
   }
 }

@@ -54,5 +54,19 @@
     "somethingWentWrong": "حدث خطأ ما",
     "@somethingWentWrong": {},
     "undoDoneMessage": "إذا كنت تريد التراجع عن الإنجاز، انقر مرة أخرى",
-    "@undoDoneMessage": {}
+    "@undoDoneMessage": {},
+    "logout": "تسجيل الخروج",
+    "@logout": {},
+    "email": "البريد الإلكتروني",
+    "@email": {},
+    "password": "كلمة المرور",
+    "@password": {},
+    "name": "الاسم",
+    "@name": {},
+    "login": "تسجيل الدخول",
+    "@login": {},
+    "register": "إنشاء حساب",
+    "@register": {},
+    "dontHaveAnAccount": "ليس لديك حساب؟ سجل الآن",
+    "@dontHaveAnAccount": {}
 }

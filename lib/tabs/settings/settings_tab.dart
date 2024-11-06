@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/app_theme.dart';
+import 'package:todo_app/auth/login_screen.dart';
+import 'package:todo_app/auth/user_provider.dart';
 import 'package:todo_app/tabs/settings/language_bottom_sheet.dart';
 import 'package:todo_app/tabs/settings/settings_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:todo_app/tabs/tasks/tasks_provider.dart';
 
 /* -------------------------------------------------------------------------- */
-/*                              Settings Tab Widget                             */
+/*                              Settings Tab                                    */
 /* -------------------------------------------------------------------------- */
 class SettingsTab extends StatefulWidget {
   const SettingsTab({super.key});
@@ -157,6 +160,34 @@ class _SettingsTabState extends State<SettingsTab> {
                         inactiveThumbColor: AppTheme.white,
                       ),
                     ],
+                  ),
+                ),
+
+                /* -------------------------------------------------------------------------- */
+                /*                            Logout Section                                   */
+                /* -------------------------------------------------------------------------- */
+                const SizedBox(height: 30),
+                TextButton.icon(
+                  onPressed: () {
+                    Provider.of<UserProvider>(context, listen: false)
+                        .updateUser(null);
+                    Navigator.of(context)
+                        .pushReplacementNamed(LoginScreen.routName);
+                    Provider.of<TasksProvider>(context, listen: false)
+                        .tasks
+                        .clear();
+                  },
+                  icon: const Icon(
+                    Icons.logout,
+                    color: AppTheme.primary,
+                  ),
+                  label: Text(
+                    AppLocalizations.of(context)!.logout,
+                    style: const TextStyle(
+                      color: AppTheme.primary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],

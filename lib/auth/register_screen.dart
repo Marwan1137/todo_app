@@ -1,9 +1,21 @@
+// ignore_for_file: avoid_print
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/app_theme.dart';
+import 'package:todo_app/auth/user_provider.dart';
+import 'package:todo_app/firebase_functions.dart';
+import 'package:todo_app/home_screen.dart';
 import 'package:todo_app/widgets/default_elevated_button.dart';
 import 'package:todo_app/widgets/default_text_form_field.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String routName = '/register';
+
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -25,7 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       /*                            App Bar Configuration                            */
       /* -------------------------------------------------------------------------- */
       appBar: AppBar(
-        title: const Text('Register'),
+        title: Text(AppLocalizations.of(context)!.register),
       ),
       /* -------------------------------------------------------------------------- */
       /*                            Register Form Layout                             */
@@ -42,12 +54,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               /* -------------------------------------------------------------------------- */
               DefaultTextFormField(
                 controller: nameController,
-                hintText: 'Name',
-                isDark: true,
+                hintText: AppLocalizations.of(context)!.name,
                 validator: (value) {
-                  if (value == null ||
-                      value.trim().isEmpty ||
-                      value.length < 6) {
+                  if (value == null || value.trim().isEmpty) {
                     return 'Name is required';
                   }
                   return null;
@@ -59,8 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               /* -------------------------------------------------------------------------- */
               DefaultTextFormField(
                 controller: emailController,
-                hintText: 'Email',
-                isDark: true,
+                hintText: AppLocalizations.of(context)!.email,
                 validator: (value) {
                   if (value == null ||
                       value.trim().isEmpty ||
@@ -77,8 +85,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               /* -------------------------------------------------------------------------- */
               DefaultTextFormField(
                 controller: passwordController,
-                hintText: 'password',
-                isDark: true,
+                hintText: AppLocalizations.of(context)!.password,
                 isPassword: true,
                 validator: (value) {
                   if (value == null ||
@@ -91,11 +98,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 80),
               /* -------------------------------------------------------------------------- */
-              /*                            Login Button                                    */
+              /*                             Register Button                                */
               /* -------------------------------------------------------------------------- */
               DefaultElevatedButton(
                 onPressed: register,
-                label: 'Register',
+                label: AppLocalizations.of(context)!.register,
               ),
             ],
           ),
@@ -106,7 +113,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void register() {
     if (formKey.currentState!.validate()) {
-      print('Register');
+      FirebaseFunctions.registerUser(
+        name: nameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+      ).then((userModel) {
+        Provider.of<UserProvider>(context, listen: false).updateUser(userModel);
+        Navigator.of(context).pushReplacementNamed(HomeScreen.routname);
+      }).catchError((error) {
+        String? errorMessage;
+        if (error is FirebaseAuthException) {
+          errorMessage = error.message;
+        }
+        Fluttertoast.showToast(
+          msg: errorMessage ?? 'something went wrong',
+          toastLength: Toast.LENGTH_LONG,
+          timeInSecForIosWeb: 5,
+          backgroundColor: AppTheme.green,
+          textColor: AppTheme.white,
+          fontSize: 15.0,
+        );
+      });
     }
   }
 }

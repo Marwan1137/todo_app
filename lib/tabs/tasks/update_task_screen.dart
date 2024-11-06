@@ -1,7 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 /* -------------------------------------------------------------------------- */
 /*                            Required Imports                                  */
 /* -------------------------------------------------------------------------- */
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,6 +16,7 @@ import 'package:todo_app/models/task_model.dart';
 import 'package:todo_app/tabs/settings/settings_provider.dart';
 import 'package:todo_app/tabs/tasks/tasks_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 /* -------------------------------------------------------------------------- */
 /*                            Update Task Screen Widget                         */
@@ -56,23 +61,36 @@ class UpdateTaskScreenState extends State<UpdateTaskScreen> {
         title: title,
         description: description,
         date: date,
+        isDone: widget.task.isDone,
       );
 
-      FirebaseFunctions.updateTaskInFirestore(updatedTask).timeout(
-        const Duration(milliseconds: 100),
-        onTimeout: () {
-          Provider.of<TasksProvider>(context, listen: false).getTasks();
-          Fluttertoast.showToast(
-            msg: AppLocalizations.of(context)!.taskUpdated,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-            fontSize: 16.0,
-          );
-          Navigator.of(context).pop();
-        },
-      );
+      try {
+        String userId = FirebaseAuth.instance.currentUser!.uid;
+        await FirebaseFunctions.updateTaskInFirestore(updatedTask, userId);
+
+        // Get the TasksProvider
+        TasksProvider tasksProvider =
+            Provider.of<TasksProvider>(context, listen: false);
+
+        // Update the local state and force refresh
+        tasksProvider.updateTask(updatedTask);
+        await tasksProvider.getTasks(userId); // Force refresh from Firestore
+
+        Fluttertoast.showToast(
+          msg: AppLocalizations.of(context)!.taskUpdated,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+        Navigator.of(context).pop();
+      } catch (e) {
+        Fluttertoast.showToast(
+          msg: AppLocalizations.of(context)!.somethingWentWrong,
+          backgroundColor: Colors.red,
+        );
+      }
     }
   }
 

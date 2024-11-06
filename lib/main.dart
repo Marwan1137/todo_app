@@ -1,8 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+/* -------------------------------------------------------------------------- */
+/*                            Main Application File                             */
+/* -------------------------------------------------------------------------- */
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/auth/login_screen.dart';
 import 'package:todo_app/auth/register_screen.dart';
+import 'package:todo_app/auth/user_provider.dart';
 import 'package:todo_app/tabs/settings/settings_provider.dart';
 import 'package:todo_app/tabs/tasks/tasks_provider.dart';
 import 'home_screen.dart';
@@ -11,28 +14,33 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> main() async {
+  /* -------------------------------------------------------------------------- */
+  /*                            Initialization                                    */
+  /* -------------------------------------------------------------------------- */
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FirebaseFirestore.instance.disableNetwork();
 
   final settingsProvider = SettingsProvider();
   await settingsProvider.loadSettings();
 
+  /* -------------------------------------------------------------------------- */
+  /*                            Application Setup                                 */
+  /* -------------------------------------------------------------------------- */
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(
-          value: settingsProvider,
-        ),
-        ChangeNotifierProvider(
-          create: (context) => TasksProvider(),
-        ),
+        ChangeNotifierProvider(create: (context) => settingsProvider),
+        ChangeNotifierProvider(create: (context) => TasksProvider()),
+        ChangeNotifierProvider(create: (context) => UserProvider()),
       ],
       child: const TodoApp(),
     ),
   );
 }
 
+/* -------------------------------------------------------------------------- */
+/*                            Root Application Widget                           */
+/* -------------------------------------------------------------------------- */
 class TodoApp extends StatelessWidget {
   const TodoApp({super.key});
 
@@ -43,8 +51,8 @@ class TodoApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           routes: {
-            LoginScreen.routName: (_) => LoginScreen(),
-            RegisterScreen.routName: (_) => RegisterScreen(),
+            LoginScreen.routName: (_) => const LoginScreen(),
+            RegisterScreen.routName: (_) => const RegisterScreen(),
             HomeScreen.routname: (_) => const HomeScreen(),
           },
           initialRoute: LoginScreen.routName,

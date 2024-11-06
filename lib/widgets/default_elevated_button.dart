@@ -1,16 +1,30 @@
+/* -------------------------------------------------------------------------- */
+/*                         Custom Elevated Button Widget                        */
+/* -------------------------------------------------------------------------- */
 import 'package:flutter/material.dart';
 import 'package:todo_app/app_theme.dart';
 
-// ignore: must_be_immutable
 class DefaultElevatedButton extends StatelessWidget {
-  String label;
-  VoidCallback onPressed;
+  /* -------------------------------------------------------------------------- */
+  /*                            Widget Properties                                 */
+  /* -------------------------------------------------------------------------- */
+  final String label;
+  final VoidCallback onPressed;
 
-  DefaultElevatedButton(
-      {super.key, required this.label, required this.onPressed});
+  /* -------------------------------------------------------------------------- */
+  /*                            Widget Constructor                                */
+  /* -------------------------------------------------------------------------- */
+  const DefaultElevatedButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
+    /* -------------------------------------------------------------------------- */
+    /*                            Button Widget Build                              */
+    /* -------------------------------------------------------------------------- */
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(

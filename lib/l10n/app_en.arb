@@ -54,5 +54,19 @@
     "somethingWentWrong": "Something went wrong",
     "@somethingWentWrong": {},
     "undoDoneMessage": "If you want to undo Done!, click again on it",
-    "@undoDoneMessage": {}
+    "@undoDoneMessage": {},
+    "logout": "Logout",
+    "@logout": {},
+    "email": "Email",
+    "@email": {},
+    "password": "Password",
+    "@password": {},
+    "name": "Name",
+    "@name": {},
+    "login": "Login",
+    "@login": {},
+    "register": "Register",
+    "@register": {},
+    "dontHaveAnAccount": "Don't have an account? Register now",
+    "@dontHaveAnAccount": {}
 }
